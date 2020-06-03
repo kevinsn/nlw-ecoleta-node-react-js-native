@@ -3,6 +3,7 @@ import path from 'path';
 
 // __dirname = retorna o caminho onde está sendo executado
 // Migrations = histórico do banco de dados
+// Seeds = inserts na tabela
 
 const connection = knex({
     client: 'sqlite3',
