@@ -1,9 +1,16 @@
 import React from 'react';
 
-function Header(){
+interface HeaderProps {
+    title: string;
+}
+
+// : React.FC = declarando a tipagem da variável header
+// FC = Componente escrito em formato de função (Generic)
+
+const Header: React.FC <HeaderProps> = (props) => {
     return(
         <header>
-            <h1>Ecoleta</h1>
+            <h1>{props.title}</h1>
         </header>
 
     );
