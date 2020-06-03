@@ -51,7 +51,7 @@ class PointsController{
         } = request.body;
 
         const point = {
-            image: 'image-placeholder',
+            image: 'https://images.unsplash.com/photo-1583258292688-d0213dc5a3a8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60',
             name,
             email,
             whatsapp,
