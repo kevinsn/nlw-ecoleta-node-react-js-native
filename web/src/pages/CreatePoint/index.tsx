@@ -1,13 +1,29 @@
-import React from 'react';
-import {FiArrowLeft} from 'react-icons/fi';
-import {Link} from 'react-router-dom';
+import React , { useEffect, useState }from 'react';
+import { FiArrowLeft } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import { Map, TileLayer, Marker } from 'react-leaflet'
+import api from '../../services/api';
 
 import './styles.css';
 
 import logo from '../../assets/logo.svg';
 
+interface Item{
+    id: number;
+    title: string;
+    image_url: string;
+}
+
 const CreatePoint = () =>{
+
+    const [items, setItems] = useState<Item[]>([]);
+
+    useEffect(() => {
+        api.get('items').then(response =>{
+            setItems(response.data);
+        })
+    }, [])
+
     return (
         <div id="page-create-point">
             <header>
@@ -94,30 +110,12 @@ const CreatePoint = () =>{
                     </legend>
 
                     <ul className="items-grid">
-                        <li className="selected">
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="Teste"></img>
-                            <span>Óleo de cozinha</span>
-                        </li>
-                        <li>
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="Teste"></img>
-                            <span>Óleo de cozinha</span>
-                        </li>
-                        <li>
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="Teste"></img>
-                            <span>Óleo de cozinha</span>
-                        </li>
-                        <li>
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="Teste"></img>
-                            <span>Óleo de cozinha</span>
-                        </li>
-                        <li>
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="Teste"></img>
-                            <span>Óleo de cozinha</span>
-                        </li>
-                        <li>
-                            <img src="http://localhost:3333/uploads/oleo.svg" alt="Teste"></img>
-                            <span>Óleo de cozinha</span>
-                        </li>
+                        {items.map(item => (
+                            <li key={item.id}>
+                            <img src={item.image_url} alt={item.title}></img>
+                                <span>[item.title]</span>
+                            </li>
+                        ))}
                     </ul>
 
                 </fieldset>
@@ -130,3 +128,5 @@ const CreatePoint = () =>{
 };
 
 export default CreatePoint;
+
+// Estado par array ou objeto: manualmente informar o tipo de variável que será armazenado
