@@ -1,6 +1,6 @@
-import React , { useEffect, useState, ChangeEvent }from 'react';
+import React , { useEffect, useState, ChangeEvent, FormEvent }from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Map, TileLayer, Marker } from 'react-leaflet'
 import axios from 'axios';
 import {LeafletMouseEvent} from 'leaflet';
@@ -33,10 +33,19 @@ const CreatePoint = () =>{
     
     //const [initialPosition, setinitialPosition] = useState<[number,number]>([0,0]);
 
+    const [formData, setFormData] = useState({
+        name: '', 
+        email: '',
+        whatsapp: '',
+    });
+
     const [selectedUf, setSelectedUf] = useState('0');
-    const [selectedCity, setselectedCity] = useState('0');
+    const [selectedCity, setSelectedCity] = useState('0');
+    const [selectedItems, setSelectedItems] = useState<number[]>([]);
     const [selectedPosition, setSelectedPosition] = useState<[number,number]>([0,0]);
     
+    const history = useHistory();
+
     /*
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(position =>{
@@ -82,14 +91,60 @@ const CreatePoint = () =>{
     function handleSelectCity(event: ChangeEvent<HTMLSelectElement>){
         const city = event.target.value;
 
-        setselectedCity(city);
+        setSelectedCity(city);
     }
 
     function handleMapClick(event: LeafletMouseEvent){
         setSelectedPosition([
             event.latlng.lat,
             event.latlng.lng,
-        ])    
+        ]);    
+    }
+    
+    function handleInputChange(event: ChangeEvent<HTMLInputElement>){
+        const{name, value} = event.target;
+
+        setFormData({...formData, [name]:value});
+    }
+
+    function handleSelecItem(id : number){
+        const alreadySelected = selectedItems.findIndex(item => item === id);
+
+        if (alreadySelected >= 0){
+            const filteredItems = selectedItems.filter(item => item !== id);
+            
+            setSelectedItems(filteredItems);
+        }else{
+            setSelectedItems([ ...selectedItems,id ]);
+        }
+        
+    }
+
+    async function handleSubmit(event: FormEvent){
+        event.preventDefault();
+
+        const { name, email, whatsapp} = formData;
+        const uf = selectedUf;
+        const city = selectedCity;
+        const [latitude, longitude] = selectedPosition;
+        const items = selectedItems;
+
+        const data = {
+            name,
+            email,
+            whatsapp,
+            uf,
+            city,
+            latitude,
+            longitude,
+            items            
+        };
+
+        await api.post('points', data);
+
+        alert('Ponto de coleta criado');
+
+        history.push('/');
     }
 
     return (
@@ -102,7 +157,7 @@ const CreatePoint = () =>{
                 </Link>
             </header>
 
-            <form>
+            <form onSubmit={handleSubmit}>
                 <h1>Cadastro de <br/> ponto de coleta</h1>
 
                 <fieldset>
@@ -115,6 +170,7 @@ const CreatePoint = () =>{
                             type="text"
                             name="name"
                             id="name"
+                            onChange={handleInputChange}
                         />                        
                     </div>
 
@@ -125,16 +181,18 @@ const CreatePoint = () =>{
                                 type="email"
                                 name="email"
                                 id="email"
+                                onChange={handleInputChange}
                             />
                         
                         </div>
 
                         <div className="field">
-                        <label htmlFor="whatapp">Whatapp</label>
+                        <label htmlFor="whatsapp">Whatsapp</label>
                         <input
                             type="text"
-                            name="whatapp"
-                            id="whatapp"
+                            name="whatsapp"
+                            id="whatsapp"
+                            onChange={handleInputChange}
                         />                        
                     </div>
                     </div>
@@ -185,7 +243,10 @@ const CreatePoint = () =>{
 
                     <ul className="items-grid">
                         {items.map(item => (
-                            <li key={item.id}>
+                            <li key={item.id} 
+                                onClick={() =>handleSelecItem(item.id)}
+                                className={selectedItems.includes(item.id) ? 'selected' : ''}
+                                >
                             <img src={item.image_url} alt={item.title}></img>
                                 <span>{item.title}</span>
                             </li>
