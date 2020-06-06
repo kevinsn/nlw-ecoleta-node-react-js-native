@@ -2,11 +2,9 @@ import React, { DetailedHTMLFactory } from 'react';
 import Constants from 'expo-constants';
 import { Feather as Icon } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView } from 'react-native';
 import MapView , {Marker} from 'react-native-maps'
 import { SvgUri } from 'react-native-svg';
-import { ScrollView } from 'react-native-gesture-handler';
-
 
 const Points=()=>{
     const navigation = useNavigation();
